@@ -1,4 +1,4 @@
-license = "CC0-1.0"
+license = "GPLv3-Only"
 
 modLoader="javafml"
 loaderVersion="[1,)"
