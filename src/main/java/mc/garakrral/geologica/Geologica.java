@@ -33,7 +33,7 @@ public class Geologica {
         //? if release
         LogUtil.info();
 
-        RegistrationUtil.registerModItems(bus, true);
-        RegistrationUtil.registerModBLocks(bus, true);
+        RegistrationUtil.registerModBlocks(bus, true);
+        RegistrationUtil.registerModItemsAndItemGroups(bus, true);
     }
 }

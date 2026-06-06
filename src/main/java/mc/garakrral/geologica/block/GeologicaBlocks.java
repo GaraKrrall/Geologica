@@ -24,6 +24,19 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class GeologicaBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Geologica.MOD_ID);
 
-    public static final DeferredBlock<Block> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
-            () -> new RotatableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)));
+    //? if 1.21.1 {
+    /*public static final DeferredBlock<Block> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
+                () -> new RotatableBlock(BlockBehaviour.Properties.of().strength(1.5F)));
+
+    public static final DeferredBlock<Block> BROKEN_ROCK = RegistrationUtil.registerBlock("broken_rock",
+            () -> new BrokenRockBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+
+*///?} else {
+  public static final DeferredBlock<RotatableBlock> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
+                RotatableBlock::new, props -> props.strength(1.5F).requiresCorrectToolForDrops(), true);
+
+    public static final DeferredBlock<Block> BROKEN_ROCK = RegistrationUtil.registerBlock("broken_rock",
+            BrokenRockBlock::new, props ->  BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE), true);
+
+//?}
 }

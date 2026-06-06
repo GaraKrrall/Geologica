@@ -48,6 +48,12 @@ dependencies {
 neoForge {
     version = property("deps.neoforge") as String
 
+    mods {
+        create(property("mod.id") as String) {
+            sourceSet(sourceSets.main.get())
+        }
+    }
+
     runs {
         register("client") {
             gameDirectory = file("../../run/")
