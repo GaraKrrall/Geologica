@@ -13,9 +13,12 @@
 package mc.garakrral.geologica.block;
 
 import mc.garakrral.geologica.Geologica;
+import mc.garakrral.geologica.block.rotatable.BrokenRockBlock;
+import mc.garakrral.geologica.block.rotatable.GeckoStatueBlock;
+import mc.garakrral.geologica.block.rotatable.RotatableBlock;
+import mc.garakrral.geologica.block.rotatable.TinyRockBlock;
 import mc.garakrral.geologica.util.RegistrationUtil;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -25,18 +28,25 @@ public class GeologicaBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Geologica.MOD_ID);
 
     //? if 1.21.1 {
-    /*public static final DeferredBlock<Block> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
-                () -> new RotatableBlock(BlockBehaviour.Properties.of().strength(1.5F)));
+    /*public static final DeferredBlock<RotatableBlock> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
+            () -> GeckoStatueBlock.of(BlockBehaviour.Properties.of().strength(1.5F)));
 
-    public static final DeferredBlock<Block> BROKEN_ROCK = RegistrationUtil.registerBlock("broken_rock",
-            () -> new BrokenRockBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+    public static final DeferredBlock<RotatableBlock> BROKEN_ROCK = RegistrationUtil.registerBlock("broken_rock",
+            () -> BrokenRockBlock.of(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+
+
+    public static final DeferredBlock<RotatableBlock> TINY_ROCK = RegistrationUtil.registerBlock("tiny_rock",
+            () -> TinyRockBlock.of(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
 
 *///?} else {
-  public static final DeferredBlock<RotatableBlock> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
-                RotatableBlock::new, props -> props.strength(1.5F).requiresCorrectToolForDrops(), true);
+   public static final DeferredBlock<RotatableBlock> GECKO_STATUE = RegistrationUtil.registerBlock("gecko_statue",
+                GeckoStatueBlock::of, props -> props.strength(1.5F).requiresCorrectToolForDrops(), true);
 
-    public static final DeferredBlock<Block> BROKEN_ROCK = RegistrationUtil.registerBlock("broken_rock",
-            BrokenRockBlock::new, props ->  BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE), true);
+    public static final DeferredBlock<RotatableBlock> BROKEN_ROCK = RegistrationUtil.registerBlock("broken_rock",
+            BrokenRockBlock::of, props ->  BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE), true);
+
+    public static final DeferredBlock<RotatableBlock> TINY_ROCK = RegistrationUtil.registerBlock("tiny_rock",
+            TinyRockBlock::of, props ->  BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE), true);
 
 //?}
 }

@@ -10,7 +10,7 @@
  *
  */
 
-package mc.garakrral.geologica.block;
+package mc.garakrral.geologica.block.rotatable;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -21,8 +21,12 @@ public class BrokenRockBlock extends RotatableBlock {
     protected static final VoxelShape WEST_SHAPE = Block.box(5, 0, 3, 15, 2, 11);
     protected static final VoxelShape SOUTH_SHAPE = Block.box(3, 0, 1, 11, 2, 11);
 
-    public BrokenRockBlock(Properties properties) {
+    private BrokenRockBlock(Properties properties) {
         super(properties);
+    }
+
+    public static BrokenRockBlock of(Properties properties) {
+        return new BrokenRockBlock(properties);
     }
 
     @Override

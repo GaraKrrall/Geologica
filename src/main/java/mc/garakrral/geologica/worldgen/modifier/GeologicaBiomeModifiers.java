@@ -12,8 +12,7 @@
 
 package mc.garakrral.geologica.worldgen.modifier;
 
-import mc.garakrral.geologica.Geologica;
-import mc.garakrral.geologica.util.LocationUtil;
+import mc.garakrral.geologica.util.RegistrationUtil;
 import mc.garakrral.geologica.worldgen.placed.GeologicaPlacedFeatures;
 
 import net.minecraft.core.HolderGetter;
@@ -27,10 +26,10 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class GeologicaBiomeModifiers {
-    public static final ResourceKey<BiomeModifier> ADD_BROKEN_ROCK = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, LocationUtil.modIdentifier(Geologica.MOD_ID, "add_broken_rock"));
+    public static final ResourceKey<BiomeModifier> ADD_BROKEN_ROCK = RegistrationUtil.createNewBiomeModifierKey("add_broken_rock");
+    public static final ResourceKey<BiomeModifier> ADD_TINY_ROCK = RegistrationUtil.createNewBiomeModifierKey("add_tiny_rock");
 
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
@@ -38,5 +37,7 @@ public class GeologicaBiomeModifiers {
 
         context.register(ADD_BROKEN_ROCK, new BiomeModifiers.AddFeaturesBiomeModifier(biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(GeologicaPlacedFeatures.BROKEN_ROCK)), GenerationStep.Decoration.VEGETAL_DECORATION));
+        context.register(ADD_TINY_ROCK, new BiomeModifiers.AddFeaturesBiomeModifier(biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(GeologicaPlacedFeatures.TINY_ROCK)), GenerationStep.Decoration.VEGETAL_DECORATION));
     }
 }

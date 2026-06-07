@@ -12,7 +12,6 @@
 
 package mc.garakrral.geologica;
 
-import mc.garakrral.geologica.datagen.GeologicaDataGenerator;
 import mc.garakrral.geologica.util.LogUtil;
 import mc.garakrral.geologica.util.RegistrationUtil;
 

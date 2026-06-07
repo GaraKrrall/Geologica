@@ -12,6 +12,7 @@
 
 package mc.garakrral.geologica.datagen;
 
+//? if 26.1.2 {
 import mc.garakrral.geologica.Geologica;
 import mc.garakrral.geologica.util.LogUtil;
 import mc.garakrral.geologica.worldgen.GeologicaWorldGen;
@@ -40,3 +41,4 @@ public class GeologicaDataGenerator {
         );
     }
 }
+//? }

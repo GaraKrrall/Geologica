@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "geologica:block/tiny_rock"
+    },
+    "facing=east": {
+      "model": "geologica:block/tiny_rock",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "geologica:block/tiny_rock",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "geologica:block/tiny_rock",
+      "y": 270
+    }
+  }
+}

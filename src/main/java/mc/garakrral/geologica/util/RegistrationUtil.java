@@ -12,12 +12,16 @@
 
 package mc.garakrral.geologica.util;
 
+import mc.garakrral.geologica.Geologica;
 import mc.garakrral.geologica.block.GeologicaBlocks;
+//? if 26.1.2
 import mc.garakrral.geologica.datagen.GeologicaDataGenerator;
 import mc.garakrral.geologica.item.GeologicaItems;
 import mc.garakrral.geologica.item.group.GeologicaItemGroups;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -25,10 +29,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -150,7 +159,10 @@ public class RegistrationUtil {
      */
     @ApiStatus.Internal
     public static void registerDataGenerators(IEventBus modBus) {
+        //? if 26.1.2
         modBus.addListener(GeologicaDataGenerator::gatherData);
+        //? if 1.21.1
+        //LogUtil.warn("Minecraft version 1.21.1 detected. Skipping Data Gen");
     }
 
     /**
@@ -217,11 +229,15 @@ public class RegistrationUtil {
      */
     @ApiStatus.Internal
     public static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> factory, UnaryOperator<BlockBehaviour.Properties> properties, boolean useNewApi) {
+        //? if 26.1.2 {
         requireNewApi(useNewApi);
         DeferredBlock<T> block = GeologicaBlocks.BLOCKS.registerBlock(name, factory, properties);
         registerBlockItem(name, block, true);
         addToMainTab(block);
         return block;
+        //? } else {
+        /*return null;
+        *///? }
     }
 
     /**
@@ -319,6 +335,88 @@ public class RegistrationUtil {
     @ApiStatus.Experimental
     public static List<Supplier<? extends ItemLike>> getBlockItemContents() {
         return Collections.unmodifiableList(MAIN_TAB_CONTENTS);
+    }
+
+    /**
+     * Creates and returns a new {@link ResourceKey} for a {@link ConfiguredFeature}
+     * mapped under the mod's specific namespace.
+     *
+     * <p>This helper method simplifies the creation of world generation registry keys
+     * by automatically associating the provided feature identifier with the central
+     * mod ID registry. It ensures consistent naming conventions across all data-driven
+     * configured features handled by Geologica.</p>
+     *
+     * <p>The generated resource key is primarily used during datagen and bootstrap
+     * phases to register raw feature configurations, such as ore veins, small rocks,
+     * or custom underground structures, before they are wrapped into placement rules.</p>
+     *
+     * <p>Example:</p>
+     * <pre>{@code
+     * public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_SULFUR =
+     * RegistrationUtil.createNewFeatureKey("ore_sulfur");
+     * }</pre>
+     *
+     * @param id the unique registry identifier string for the configured feature
+     * @return a unique resource key mapped to the configured feature registry under Geologica's namespace
+     */
+    @ApiStatus.Internal
+    public static ResourceKey<ConfiguredFeature<?, ?>> createNewConfiguredFeatureKey(@NotNull String id) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, LocationUtil.modIdentifier(Geologica.MOD_ID, id));
+    }
+
+    /**
+     * Creates and returns a new {@link ResourceKey} for a {@link PlacedFeature}
+     * mapped under the mod's specific namespace.
+     *
+     * <p>This helper method streamlines the definition of world generation placement keys.
+     * It binds the given feature identifier with Geologica's mod ID, ensuring that
+     * biome injection and datapack modifiers can target the correct location without
+     * manual string formatting.</p>
+     *
+     * <p>Placed features represent configured features that have been processed with
+     * contextual modifiers (such as count per chunk, height distribution, and biome filters).
+     * Use this method to declare the final registry keys required by the mod's worldgen injection.</p>
+     *
+     * <p>Example:</p>
+     * <pre>{@code
+     * public static final ResourceKey<PlacedFeature> ORE_SULFUR_PLACED =
+     * RegistrationUtil.createNewPlacedFeatureKey("ore_sulfur_placed");
+     * }</pre>
+     *
+     * @param id the unique registry identifier string for the placed feature
+     * @return a unique resource key mapped to the placed feature registry under Geologica's namespace
+     */
+    @ApiStatus.Internal
+    public static ResourceKey<PlacedFeature> createNewPlacedFeatureKey(@NotNull String id) {
+        return ResourceKey.create(Registries.PLACED_FEATURE, LocationUtil.modIdentifier(Geologica.MOD_ID, id));
+    }
+
+    /**
+     * Creates and returns a new {@link ResourceKey} for a {@link BiomeModifier}
+     * mapped under NeoForge's biome modifier registry using the mod's specific namespace.
+     *
+     * <p>This helper method simplifies the creation of registry keys used to inject
+     * custom world generation features (such as ores, rocks, or vegetation) into existing
+     * biomes. It automates the boilerplate required to hook into NeoForge's dynamic
+     * datapack-driven biome modification system.</p>
+     *
+     * <p>Biome modifiers are evaluated during the registry freezing phase and allow
+     * Geologica to safely populate the overworld, nether, or end without directly
+     * overriding vanilla biome JSON definitions, preventing compatibility conflicts with
+     * other worldgen mods.</p>
+     *
+     * <p>Example:</p>
+     * <pre>{@code
+     * public static final ResourceKey<BiomeModifier> ADD_BROKEN_ROCK =
+     * RegistrationUtil.createNewBiomeModifierKey("add_broken_rock");
+     * }</pre>
+     *
+     * @param id the unique registry identifier string for the biome modifier
+     * @return a unique resource key mapped to the NeoForge biome modifier registry under Geologica's namespace
+     */
+    @ApiStatus.Internal
+    public static ResourceKey<BiomeModifier> createNewBiomeModifierKey(@NotNull String id) {
+        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, LocationUtil.modIdentifier(Geologica.MOD_ID, id));
     }
 
     /**

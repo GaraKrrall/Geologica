@@ -12,11 +12,9 @@
 
 package mc.garakrral.geologica.worldgen.configured;
 
-import mc.garakrral.geologica.Geologica;
 import mc.garakrral.geologica.block.GeologicaBlocks;
-import mc.garakrral.geologica.util.LocationUtil;
+import mc.garakrral.geologica.util.RegistrationUtil;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -25,10 +23,11 @@ import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConf
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 public class GeologicaConfiguredFeatures {
-    public static final ResourceKey<ConfiguredFeature<?, ?>> BROKEN_ROCK = ResourceKey.create(Registries.CONFIGURED_FEATURE,
-            LocationUtil.modIdentifier(Geologica.MOD_ID, "broken_rock"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BROKEN_ROCK = RegistrationUtil.createNewConfiguredFeatureKey("broken_rock");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> TINY_ROCK = RegistrationUtil.createNewConfiguredFeatureKey("tiny_rock");
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         context.register(BROKEN_ROCK, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(BlockStateProvider.simple(GeologicaBlocks.BROKEN_ROCK.get()))));
+        context.register(TINY_ROCK, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(BlockStateProvider.simple(GeologicaBlocks.TINY_ROCK.get()))));
     }
 }
