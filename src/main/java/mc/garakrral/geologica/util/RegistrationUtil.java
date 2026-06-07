@@ -13,6 +13,7 @@
 package mc.garakrral.geologica.util;
 
 import mc.garakrral.geologica.block.GeologicaBlocks;
+import mc.garakrral.geologica.datagen.GeologicaDataGenerator;
 import mc.garakrral.geologica.item.GeologicaItems;
 import mc.garakrral.geologica.item.group.GeologicaItemGroups;
 
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -69,11 +71,11 @@ public class RegistrationUtil {
     /**
      * Registers all blocks belonging to the mod.
      *
-     * @param modBus the mod event bus used for registration
+     * @param modBus   the mod event bus used for registration
      * @param printLog whether a registration message should be written to the log
      */
     @ApiStatus.Internal
-    public static void registerModBlocks(IEventBus modBus, Boolean printLog) {
+    public static void registerModBlocks(IEventBus modBus, boolean printLog) {
         GeologicaBlocks.BLOCKS.register(modBus);
         if (printLog) LogUtil.info("Registering Mod Blocks");
     }
@@ -81,11 +83,11 @@ public class RegistrationUtil {
     /**
      * Registers all items belonging to the mod.
      *
-     * @param modBus the mod event bus used for registration
+     * @param modBus   the mod event bus used for registration
      * @param printLog whether a registration message should be written to the log
      */
     @ApiStatus.Internal
-    public static void registerModItems(IEventBus modBus, Boolean printLog) {
+    public static void registerModItems(IEventBus modBus, boolean printLog) {
         GeologicaItems.ITEMS.register(modBus);
         if (printLog) LogUtil.info("Registering Mod Items");
     }
@@ -94,7 +96,7 @@ public class RegistrationUtil {
      * Registers all items and creative mode tabs belonging to the mod.
      *
      * <p>This method acts as a convenience wrapper around
-     * {@link #registerModItems(IEventBus, Boolean)} and additionally registers
+     * {@link #registerModItems(IEventBus, boolean)} and additionally registers
      * all creative mode tabs defined by Geologica.</p>
      *
      * <p>Using this method is recommended when both items and item groups should
@@ -109,14 +111,46 @@ public class RegistrationUtil {
      * }
      * }</pre>
      *
-     * @param modBus the mod event bus used for registration
+     * @param modBus   the mod event bus used for registration
      * @param printLog whether registration messages should be written to the log
      */
     @ApiStatus.Internal
-    public static void registerModItemsAndItemGroups(IEventBus modBus, Boolean printLog) {
+    public static void registerModItemsAndItemGroups(IEventBus modBus, boolean printLog) {
         registerModItems(modBus, printLog);
         GeologicaItemGroups.TABS.register(modBus);
         if (printLog) LogUtil.info("Registering Mod Item Groups");
+    }
+
+    /**
+     * Registers the mod's data generation listeners to the provided mod event bus.
+     *
+     * <p>
+     * This method is responsible for hooking Geologica's data generation entry points
+     * into NeoForge's data generation system. During data generation runs, the
+     * registered listener will receive the appropriate {@code GatherDataEvent}
+     * implementation and generate all required built-in datapack resources,
+     * including world generation registries such as configured features,
+     * placed features, biome modifiers, and any future datapack-driven content.
+     * </p>
+     *
+     * <p>
+     * This registration has no effect during normal gameplay and is only used when
+     * executing dedicated data generation run configurations (for example
+     * {@code runServerData} or similar datagen tasks provided by NeoForge).
+     * </p>
+     *
+     * <p>
+     * Centralizing this registration inside {@code RegistrationUtil} keeps the mod
+     * entrypoint clean and ensures that all registration-related operations remain
+     * grouped in a single location.
+     * </p>
+     *
+     * @param modBus the mod event bus used to register Geologica's data generation
+     *               event listeners
+     */
+    @ApiStatus.Internal
+    public static void registerDataGenerators(IEventBus modBus) {
+        modBus.addListener(GeologicaDataGenerator::gatherData);
     }
 
     /**
@@ -133,9 +167,9 @@ public class RegistrationUtil {
      * );
      * }</pre>
      *
-     * @param name the registry name of the block
+     * @param name  the registry name of the block
      * @param block the block supplier
-     * @param <T> the block type
+     * @param <T>   the block type
      * @return the registered block
      */
     @ApiStatus.Internal
@@ -154,9 +188,9 @@ public class RegistrationUtil {
      *
      * <p>In most cases, this method should not be called directly.</p>
      *
-     * @param name the registry name of the block item
+     * @param name  the registry name of the block item
      * @param block the block supplier associated with the block item
-     * @param <T> the block type
+     * @param <T>   the block type
      */
     @ApiStatus.Internal
     public static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
@@ -166,23 +200,24 @@ public class RegistrationUtil {
     /**
      * Version 26.1.2 requires the new registration system. Please set {@code useNewApi} to {@code true}.
      *
-     * @param name name
-     * @param factory factory
+     * @param name       name
+     * @param factory    factory
      * @param properties properties
-     * @param useNewApi use new api
+     * @param useNewApi  use new api
      *
-     * <p>Example:</p>
-     * <pre>{@code
-     * RegistrationUtil.registerBlock(
-     *     "id",
-     *     Block::new,
-     *     props -> props.strength(1.5F).requiresCorrectToolForDrops(),
-     *     true
-     * );
-     * }</pre>
+     *                   <p>Example:</p>
+     *                   <pre>{@code
+     *                   RegistrationUtil.registerBlock(
+     *                       "id",
+     *                       Block::new,
+     *                       props -> props.strength(1.5F).requiresCorrectToolForDrops(),
+     *                       true
+     *                   );
+     *                   }</pre>
      */
     @ApiStatus.Internal
     public static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> factory, UnaryOperator<BlockBehaviour.Properties> properties, boolean useNewApi) {
+        requireNewApi(useNewApi);
         DeferredBlock<T> block = GeologicaBlocks.BLOCKS.registerBlock(name, factory, properties);
         registerBlockItem(name, block, true);
         addToMainTab(block);
@@ -200,32 +235,32 @@ public class RegistrationUtil {
      * Please use {@code useNewApi = true} when registering blocks through the
      * corresponding block registration method.</p>
      *
-     * @param name the registry name of the block item
-     * @param block the block supplier associated with the block item
+     * @param name      the registry name of the block item
+     * @param block     the block supplier associated with the block item
      * @param useNewApi indicates that the new registration system should be used
-     * @param <T> the block type
+     * @param <T>       the block type
      */
     @ApiStatus.Internal
     public static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block, boolean useNewApi) {
+        requireNewApi(useNewApi);
         GeologicaItems.ITEMS.registerSimpleBlockItem(name, block);
     }
 
     /**
      * Creates and registers the main creative mode tab.
      *
-     * @param tabs the creative tab deferred register
+     * @param tabs  the creative tab deferred register
      * @param modId the mod identifier used for the tab translation key
-     * @param icon the item used as the tab icon
+     * @param icon  the item used as the tab icon
      *
-     * <p>Example:</p>
-     * <pre>{@code
-     * RegistrationUtil.createNewCreativeTab(
-     *     TABS,
-     *     "geologica",
-     *     GeologicaBlocks.BROKEN_ROCK
-     * );
-     * }</pre>
-     *
+     *              <p>Example:</p>
+     *              <pre>{@code
+     *              RegistrationUtil.createNewCreativeTab(
+     *                  TABS,
+     *                  "geologica",
+     *                  GeologicaBlocks.BROKEN_ROCK
+     *              );
+     *              }</pre>
      * @return the registered creative mode tab supplier
      */
     @ApiStatus.Internal
@@ -257,7 +292,7 @@ public class RegistrationUtil {
      * @return all entries currently registered for the main creative tab
      *
      *
-    * <p>Example:</p>
+     * <p>Example:</p>
      * <pre>{@code
      * RegistrationUtil.addToMainTab(ModItems.TEST_ITEM);
      * RegistrationUtil.addToMainTab(ModBlocks.TEST_BLOCK);
@@ -265,8 +300,8 @@ public class RegistrationUtil {
      *
      */
     @ApiStatus.Internal
-    public static List<Supplier<? extends ItemLike>> getMainTabContents() {
-        return getBlockItemContents();
+    private static List<Supplier<? extends ItemLike>> getMainTabContents() {
+        return MAIN_TAB_CONTENTS;
     }
 
     /**
@@ -283,6 +318,46 @@ public class RegistrationUtil {
     @ApiStatus.Internal
     @ApiStatus.Experimental
     public static List<Supplier<? extends ItemLike>> getBlockItemContents() {
-        return MAIN_TAB_CONTENTS;
+        return Collections.unmodifiableList(MAIN_TAB_CONTENTS);
+    }
+
+    /**
+     * Ensures that the new NeoForge registration API is being used.
+     *
+     * <p>Beginning with NeoForge 26.1.2, the legacy registration system is no
+     * longer supported by this utility. Any registration methods that depend on
+     * the modern registration workflow should invoke this validation method before
+     * proceeding with registration logic.</p>
+     *
+     * <p>If {@code useNewApi} is {@code false}, an {@link IllegalArgumentException}
+     * will be thrown to indicate that the caller attempted to use an unsupported
+     * registration mode.</p>
+     *
+     * <p>This method exists primarily as a compatibility safeguard and to provide
+     * a clear, centralized validation point for APIs that previously supported
+     * both legacy and modern registration systems.</p>
+     *
+     * <p>Example:</p>
+     * <pre>{@code
+     * RegistrationUtil.requireNewApi(true);
+     *
+     * DeferredBlock<Block> block =
+     *     RegistrationUtil.registerBlock(
+     *         "example_block",
+     *         Block::new,
+     *         props -> props.strength(2.0F),
+     *         true
+     *     );
+     * }</pre>
+     *
+     * @param useNewApi whether the caller intends to use the NeoForge 26.1.2+
+     *                  registration system
+     *
+     * @throws IllegalArgumentException if {@code useNewApi} is {@code false}
+     */
+    @ApiStatus.Internal
+    public static void requireNewApi(boolean useNewApi) {
+        if (!useNewApi) throw new IllegalArgumentException("Legacy registration API is no longer supported in NeoForge 26.1.2+.");
     }
 }
+

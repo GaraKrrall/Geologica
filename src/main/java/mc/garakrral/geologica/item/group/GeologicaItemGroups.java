@@ -27,5 +27,5 @@ public class GeologicaItemGroups {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Geologica.MOD_ID);
 
     public static final Supplier<CreativeModeTab> MAIN_TAB =
-            RegistrationUtil.createNewCreativeTab(TABS, "geologica", GeologicaBlocks.BROKEN_ROCK);
+            RegistrationUtil.createNewCreativeTab(TABS, "data/geologica", GeologicaBlocks.BROKEN_ROCK);
 }

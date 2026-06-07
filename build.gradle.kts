@@ -64,6 +64,29 @@ neoForge {
             gameDirectory = file("../../run/")
             server()
         }
+
+        if (sc.current.parsed >= "1.21.4") {
+            register("clientData") {
+                gameDirectory = file("../../run/")
+                clientData()
+            }
+
+            register("serverData") {
+                gameDirectory = file("../../run/")
+                serverData()
+
+                programArguments.addAll(
+                    "--mod", property("mod.id").toString(),
+                    "--server",
+                    "--output", file("src/generated/resources").absolutePath
+                )
+            }
+        } else {
+            register("data") {
+                gameDirectory = file("../../run/")
+                data()
+            }
+        }
     }
 }
 
@@ -71,6 +94,12 @@ java {
     withSourcesJar()
     targetCompatibility = requiredJava
     sourceCompatibility = requiredJava
+}
+
+sourceSets {
+    main {
+        resources.srcDir("src/generated/resources")
+    }
 }
 
 tasks {

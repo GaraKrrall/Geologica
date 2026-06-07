@@ -12,6 +12,7 @@
 
 package mc.garakrral.geologica;
 
+import mc.garakrral.geologica.datagen.GeologicaDataGenerator;
 import mc.garakrral.geologica.util.LogUtil;
 import mc.garakrral.geologica.util.RegistrationUtil;
 
@@ -35,5 +36,6 @@ public class Geologica {
 
         RegistrationUtil.registerModBlocks(bus, true);
         RegistrationUtil.registerModItemsAndItemGroups(bus, true);
+        RegistrationUtil.registerDataGenerators(bus);
     }
 }
