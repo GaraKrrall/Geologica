@@ -1,9 +1,9 @@
 {
-  "feature": "geologica:tiny_rock",
+  "feature": "geologica:gecko_statue",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 125
+      "count": 15
     },
     {
       "type": "minecraft:in_square"
@@ -27,7 +27,7 @@
         "predicates": [
           {
             "type": "minecraft:matching_blocks",
-            "blocks": "minecraft:deepslate",
+            "blocks": "geologica:gecko_statue",
             "offset": [
               0,
               -1,

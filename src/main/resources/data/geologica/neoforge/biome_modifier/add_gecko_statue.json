@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "geologica:gecko_statue",
+  "step": "underground_ores"
+}
